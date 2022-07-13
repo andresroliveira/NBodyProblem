@@ -54,11 +54,13 @@ def read_data(file: str):
 
 
 def main():
-    n, S0, m = read_data("pvi.csv")
+    file = input('enter a csv file: ')
+    tmax = float(input('enter a tmax: '))
+    n, S0, m = read_data(file + ".csv")
     # S0[0] += 0.001
     pos = state_to_pos(S0, n)
     dt = 1. / 30
-    t = np.arange(0, 10, dt)
+    t = np.arange(0, tmax, dt)
     print('prepare to solve')
     sol = odeint(gravitation, S0, t, args=(n, m))
     print('solved')
@@ -89,9 +91,10 @@ def main():
                          interval=1000 * dt - (t1 - t0),
                          init_func=init)
     # plt.show()
-    anim.save('sol.gif', fps=1 / dt)
+    anim.save('sol_' + file + '.gif', fps=1 / dt)
 
     print('done')
+    input("Press Enter to continue...")
 
 if __name__ == "__main__":
     main()
