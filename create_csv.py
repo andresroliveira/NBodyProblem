@@ -25,10 +25,10 @@ def state_to_DataFrame(S, n, m):
 
 def main():
     n = int(input('enter n: '))
-    b = 2 * np.array([[np.cos(2 * np.pi * i / n),
-                       np.sin(2 * np.pi * i / n)] for i in range(n)])
-    v = np.array([[-np.sin(2 * np.pi * i / n),
-                   np.cos(2 * np.pi * i / n)] for i in range(n)])
+    b = 2 * np.array([[np.cos(2.0 * np.pi * i / n),
+                       np.sin(2.0 * np.pi * i / n)] for i in range(n)])
+    v = np.array([[-np.sin(2.0 * np.pi * i / n),
+                   np.cos(2.0 * np.pi * i / n)] for i in range(n)])
     m = np.ones(n)
 
     show_points(b, n, m)
