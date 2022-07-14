@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from scipy.integrate import odeint
+from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import matplotlib.colors as mcolors
@@ -16,7 +16,7 @@ def force(pos1, pos2, m1, m2):
     return f
 
 
-def gravitation(S, t, n, m):
+def gravitation(t, S, n, m):
     x = S[:n]
     y = S[n:2 * n]
     vx = S[2 * n:3 * n]
@@ -54,17 +54,37 @@ def read_data(file: str):
 
 
 def main():
-    file = input('enter a csv file: ')
-    tmax = float(input('enter a tmax: '))
+    # file = input('enter a csv file: ')
+    file = 'pvi_4'
+    # tmax = float(input('enter a tmax: '))
+    tmax = 10
     n, S0, m = read_data(file + ".csv")
-    # S0[0] += 0.001
     pos = state_to_pos(S0, n)
-    dt = 1. / 30
-    t = np.arange(0, tmax, dt)
+    dt = 1. / 1000
+    t_eval = np.arange(0, tmax, dt)
     print('prepare to solve')
-    sol = odeint(gravitation, S0, t, args=(n, m))
+    sol_ivp = solve_ivp(gravitation,
+                        t_span=[0, tmax],
+                        y0=S0,
+                        args=(n, m),
+                        method='DOP853',
+                        t_eval=t_eval,
+                        rtol=1e-10,
+                        atol=1e-15)
+
+    if not sol_ivp.success:
+        raise Exception("Not success solve_ivp!")
+        raise Exception(sol_ivp.message)
+        exit(0)
+
     print('solved')
-    # print(sol.shape)
+    sol = sol_ivp.y.T
+    t = sol_ivp.t
+    dt = t[1] - t[0]
+
+    print(sol.shape)
+    print(state_to_pos(sol[0], n))
+    print('fps =', 1 / dt)
 
     print('animate')
     fig = plt.figure(figsize=(5, 5))
@@ -90,11 +110,13 @@ def main():
                          frames=len(t),
                          interval=1000 * dt - (t1 - t0),
                          init_func=init)
-    # plt.show()
+
     anim.save('sol_' + file + '.gif', fps=1 / dt)
+    plt.show()
 
     print('done')
     input("Press Enter to continue...")
+
 
 if __name__ == "__main__":
     main()
