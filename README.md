@@ -6,6 +6,12 @@
 
 ## Creating Virtual Environments
 
+Clone this repository
+
+```sh
+git clone https://github.com/andresroliveira/NBodyProblem.git
+```
+
 To create the Python Virtual Environment from Command Prompt, Run: 
 ```sh Command Prompt 
 python3 -m venv .venv
