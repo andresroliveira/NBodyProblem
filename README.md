@@ -6,6 +6,12 @@
 
 ## Creating Virtual Environments
 
+Clone this repository
+
+```sh
+git clone https://github.com/andresroliveira/NBodyProblem.git
+```
+
 To create the Python Virtual Environment from Command Prompt, Run: 
 ```sh Command Prompt 
 python3 -m venv .venv
@@ -34,12 +40,14 @@ python .\n-body_problem.py file_csv
 
 ### Exemple
 
+The command
+
 ```sh
 python .\n-body_problem.py ipv
 ```
 
-will execute [ivp.csv](ivp.csv) and generate [output/sol_ivp.csv](output/sol_ivp.csv) and [output/sol_ivp.gif](output/sol_ivp.gif).
+will execute [ivp.csv](ivp.csv) and generate [output/sol_ivp.csv](output/sol_ivp.csv) and [output/sol_ivp.gif](output/sol_ivp.gif). The solution is the Figure 2.
 
 | ![Solution of ivp.csv](outputs/sol_ivp.gif "Solution of ivp.csv") |
 |:--:|
-| Figure 1: *Solution of ivp.csv* |
+| Figure 2: *Solution of ivp.csv* |
