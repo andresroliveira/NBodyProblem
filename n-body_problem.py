@@ -89,24 +89,25 @@ def main(file: str, tmax: float, fps: float):
         fps: float
         frames per second of resulting imagem. Default is 26.0
     """
+
     n, S0, m = read_data(file + ".csv")
-    pos = state_to_pos(S0, n)
-    t_eval = np.linspace(0, tmax, int(tmax * fps * 10))
     print('prepare to solve')
-    sol_ivp = solve_ivp(
-        gravitation,
-        t_span=[0, tmax],
-        y0=S0,
-        args=(n, m),
-        method='Radau',
-        # t_eval=t_eval,
-        # rtol=1e-10,
-        # atol=1e-15
-    )
+    pos = state_to_pos(S0, n)
+    t_eval = np.linspace(0, tmax, int(tmax * fps * 100))
+    print('solving')
+
+    sol_ivp = solve_ivp(gravitation,
+                        t_span=[0, tmax],
+                        y0=S0,
+                        args=(n, m),
+                        method='BDF',
+                        t_eval=t_eval,
+                        rtol=1e-6,
+                        atol=1e-9)
 
     if not sol_ivp.success:
+        print(sol_ivp.message)
         raise Exception("Not success solve_ivp!")
-        exit(0)
 
     print('solved')
     sol = sol_ivp.y.T
@@ -115,17 +116,19 @@ def main(file: str, tmax: float, fps: float):
 
     # print(sol)
     # print(sol_ivp)
+    if len(file.split('/')) > 1:
+        file = file.split('/')[-1]
 
     df = save_sol(sol, t, n)
     df.to_csv('outputs/sol_' + file + '.csv', index=False)
-    return
+    # return
 
     print(sol.shape)
     print(t.shape)
     print(state_to_pos(sol[0], n))
     # print('fps =', fps)
 
-    # for i in range(1, len(t)):
+    # for i in range(1, len(t))
     #     print(t[i] - t[i-1])
 
     print('animate')
@@ -139,26 +142,25 @@ def main(file: str, tmax: float, fps: float):
         return sca, ttx
 
     def update(i):
-        sca.set_offsets(state_to_pos(sol[i], n))
-        ttx.set_text('time = %.3f' % t[i])
+        sca.set_offsets(state_to_pos(sol[100 * i], n))
+        ttx.set_text('time = %.3f' % t[100 * i])
         return sca, ttx
 
     t0 = time()
     update(0)
     t1 = time()
 
-    anim = FuncAnimation(
-        fig,
-        update,
-        frames=len(t),
-        #  interval=1000 * (1 / (tmax * 10 * fps)) - (t1 - t0),
-        init_func=init)
+    anim = FuncAnimation(fig,
+                         update,
+                         frames=len(t) // 100,
+                         interval=1000 * dt / 100 - (t1 - t0),
+                         init_func=init)
 
-    anim.save('outputs/sol_' + file + '.gif')
+    anim.save('outputs/sol_' + file + '.gif', fps=int(100 / dt))
     plt.show()
 
     print('done')
-    input("Press Enter to continue...")
+    # input("Press Enter to continue...")
 
 
 if __name__ == "__main__":
